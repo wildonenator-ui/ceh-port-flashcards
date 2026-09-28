@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CEH ポート暗記</title>
+  <meta name="description" content="CEHのポート番号を暗記するためのフラッシュカード">
+  <!-- ホーム画面に追加したとき、アプリのように全画面で開くための設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CEHポート">
+  <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1420" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>CEH ポート暗記</h1>
+      <button id="resetBtn" class="text-btn" type="button">リセット</button>
+    </header>
+
+    <!-- 出題方向 -->
+    <div class="segmented" role="radiogroup" aria-label="出題方向">
+      <button type="button" data-mode="u2p" role="radio">用途→番号</button>
+      <button type="button" data-mode="p2u" role="radio">番号→用途</button>
+      <button type="button" data-mode="mix" role="radio">ランダム</button>
+    </div>
+
+    <!-- カテゴリ絞り込み -->
+    <div class="chips" id="chips" role="radiogroup" aria-label="カテゴリ"></div>
+
+    <!-- カウンタ -->
+    <div class="status">
+      <span id="roundLabel" class="badge">1周目</span>
+      <span id="counter" class="counter">1 / 24</span>
+      <span id="accuracy" class="accuracy">正答率 —</span>
+    </div>
+    <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+
+    <!-- カード -->
+    <section class="card-area">
+      <div id="card" class="card" tabindex="0" role="button" aria-label="カード。タップで裏返す">
+        <div class="card-inner">
+          <div class="face front">
+            <span class="cat" id="frontCat"></span>
+            <p class="ask" id="frontAsk"></p>
+            <p class="main" id="frontMain"></p>
+            <p class="sub" id="frontSub"></p>
+            <p class="hint">タップでめくる</p>
+          </div>
+          <div class="face back">
+            <span class="cat" id="backCat"></span>
+            <p class="main" id="backMain"></p>
+            <p class="sub" id="backSub"></p>
+            <p class="note" id="backNote"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1周終了時の画面 -->
+      <div id="roundEnd" class="round-end" hidden>
+        <h2 id="roundEndTitle">1周完了！</h2>
+        <p id="roundEndText"></p>
+        <button id="roundEndBtn" class="primary" type="button">要復習を始める</button>
+      </div>
+    </section>
+
+    <!-- 自己採点 -->
+    <div class="grade">
+      <button id="ngBtn" class="ng" type="button">✕ わからなかった</button>
+      <button id="okBtn" class="ok" type="button">○ わかった</button>
+    </div>
+
+    <!-- 前後移動・シャッフル -->
+    <div class="nav">
+      <button id="prevBtn" type="button" aria-label="前へ">← 前</button>
+      <button id="shuffleBtn" type="button">シャッフル</button>
+      <button id="nextBtn" type="button" aria-label="次へ">次 →</button>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="shuffleToggle">
+      <span>周回ごとに自動シャッフル</span>
+    </label>
+
+    <p class="help">Space=めくる / →=次 / ←=前 / ↑=わかった / ↓=わからなかった<br>スワイプ：左=次、右=前。進捗はこの端末内にのみ保存されます。</p>
+  </main>
+
+  <script src="ports.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
