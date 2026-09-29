@@ -1,5 +1,7 @@
 // カードを追加するときは、この配列に1行足すだけでOKです（id は重複しない番号に）。
-// category: auth / smb / mail / web / infra / iot / ot / remote / file / mobile
+// category: auth / smb / mail / web / infra / iot / ot / remote / file / mobile（以上ポート）
+//           hashcat（Hashcatモード） / cwe（CWE/WASC） / ttl（TTL初期値）
+// ※ "port" 欄はポート以外のカードでも「答えになる番号」として使います
 const PORTS = [
   { id: 1,  service: "FTP",              port: "21",   usage: "ファイル転送",              category: "file",   note: "データ転送は20。20番台連番の先頭(21→22→23→25)" },
   { id: 2,  service: "SSH",              port: "22",   usage: "暗号化リモート接続",        category: "remote", note: "Telnet(23)の暗号版" },
@@ -24,7 +26,18 @@ const PORTS = [
   { id: 21, service: "MQTT over TLS",   port: "8883", usage: "IoTメッセージング(暗号)",   category: "iot",    note: "MQTT平文(1883)の暗号版" },
   { id: 22, service: "NFS",             port: "2049", usage: "Unix系ファイル共有",        category: "file",   note: "Windows共有はSMB(445)" },
   { id: 23, service: "RDP",             port: "3389", usage: "リモートデスクトップ",       category: "remote", note: "Windows。よく攻撃対象になる" },
-  { id: 24, service: "ADB",             port: "5555", usage: "Android無線デバッグ",        category: "mobile", note: "外部公開=重大リスク。Shodanで探索される" }
+  { id: 24, service: "ADB",             port: "5555", usage: "Android無線デバッグ",        category: "mobile", note: "外部公開=重大リスク。Shodanで探索される" },
+
+  // ===== ここからポート以外の番号系カード =====
+  { id: 25, service: "Kerberoasting（Hashcat）", port: "13100", usage: "SPN付きサービスアカウントのTGSをオフライン解読するHashcatモード", category: "hashcat", note: "Kerberos 5 TGS-REP etype 23。SPN→TGS→13100。コマンド例: hashcat -m 13100 -a 0 hash.txt wordlist.txt。AS-REP Roasting(18200)と逆にしやすい。教材の『13100はAS-REQ』は誤解のもとで、正しくはTGS-REP" },
+  { id: 26, service: "AS-REP Roasting（Hashcat）", port: "18200", usage: "事前認証不要ユーザーのAS-REPをオフライン解読するHashcatモード", category: "hashcat", note: "Kerberos 5 AS-REP etype 23。事前認証オフ→AS-REP→18200。Kerberoasting(13100)と逆にしやすい" },
+  { id: 27, service: "SQLインジェクション（CWE）", port: "CWE-89", usage: "SQLiの弱点識別子（CWE）", category: "cwe", note: "SQLi＝CWE-89。WASCではWASC-19" },
+  { id: 28, service: "SQLインジェクション（WASC）", port: "WASC-19", usage: "SQLiのWASC識別子", category: "cwe", note: "SQLi＝WASC-19。CWEではCWE-89" },
+  { id: 29, service: "平文送信（CWE）", port: "CWE-319", usage: "機密情報の平文送信", category: "cwe", note: "暗号化欠如(CWE-311)と混同しやすい" },
+  { id: 30, service: "暗号化の欠如（CWE）", port: "CWE-311", usage: "機密データの暗号化欠如", category: "cwe", note: "平文送信(CWE-319)と混同しやすい" },
+  { id: 31, service: "WindowsのTTL初期値", port: "128", usage: "TTL初期値からのOS推定（Windows）", category: "ttl", note: "Windows=128／Linux=64／Cisco=255" },
+  { id: 32, service: "LinuxのTTL初期値", port: "64", usage: "TTL初期値からのOS推定（Linux/Unix）", category: "ttl", note: "Windows=128／Linux=64／Cisco=255" },
+  { id: 33, service: "CiscoのTTL初期値", port: "255", usage: "TTL初期値からのOS推定（Cisco機器）", category: "ttl", note: "Windows=128／Linux=64／Cisco=255" }
 ];
 
 // 裏面のメモを強調表示する（特に間違えやすい）ポート

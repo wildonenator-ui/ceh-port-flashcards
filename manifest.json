@@ -1,7 +1,7 @@
 {
-  "name": "CEH ポート暗記",
-  "short_name": "CEHポート",
-  "description": "CEHのポート番号を暗記するためのフラッシュカード",
+  "name": "CEH 番号暗記",
+  "short_name": "CEH番号",
+  "description": "CEHのポート番号・Hashcatモードなど番号系を暗記するフラッシュカード",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -9,8 +9,16 @@
   const CATEGORIES = [
     ["all", "全カテゴリ"], ["auth", "auth(認証)"], ["smb", "smb"], ["mail", "mail"],
     ["web", "web"], ["infra", "infra"], ["iot", "iot"], ["ot", "ot"],
-    ["remote", "remote"], ["file", "file"], ["mobile", "mobile"]
+    ["remote", "remote"], ["file", "file"], ["mobile", "mobile"],
+    ["hashcat", "Hashcatモード"], ["cwe", "CWE/WASC"], ["ttl", "TTL初期値"]
   ];
+  // カテゴリごとの問いかけ文（ここに無いカテゴリはポート用の文言になります）
+  const ASK = {
+    hashcat: { u2p: "Hashcatのモード番号は？", p2u: "何を解読するモード？" },
+    cwe:     { u2p: "識別子の番号は？",        p2u: "何の弱点？" },
+    ttl:     { u2p: "TTL初期値は？",           p2u: "どのOS/機器？" }
+  };
+  const DEFAULT_ASK = { u2p: "ポート番号は？", p2u: "サービス / 用途は？" };
   const byId = new Map(PORTS.map(p => [p.id, p]));
   const highlight = new Set(typeof HIGHLIGHT_PORTS !== "undefined" ? HIGHLIGHT_PORTS : []);
 
@@ -79,6 +87,17 @@
   function filteredIds() {
     const c = state.settings.category;
     return PORTS.filter(p => c === "all" || p.category === c).map(p => p.id);
+  }
+
+  // ports.js にカードが追加されていたら、進捗を保ったまま今の周回の末尾に足す
+  function appendNewCards() {
+    if (state.isReview || state.finished || !state.deck.length) return;
+    const inDeck = new Set(state.deck.map(c => c.id));
+    const added = filteredIds().filter(id => !inDeck.has(id));
+    if (added.length) {
+      state.deck = state.deck.concat(buildDeck(added));
+      save();
+    }
   }
 
   // 設定変更時などに1周目から始め直す
@@ -245,8 +264,9 @@
     const c = state.deck[state.index];
     const p = byId.get(c.id);
     el.frontCat.textContent = el.backCat.textContent = catLabel(p.category);
+    const ask = ASK[p.category] || DEFAULT_ASK;
     if (c.dir === "u2p") {
-      el.frontAsk.textContent = "ポート番号は？";
+      el.frontAsk.textContent = ask.u2p;
       el.frontMain.textContent = p.service;
       el.frontMain.classList.remove("num");
       el.frontSub.textContent = p.usage;
@@ -254,7 +274,7 @@
       el.backMain.classList.add("num");
       el.backSub.textContent = `${p.service}（${p.usage}）`;
     } else {
-      el.frontAsk.textContent = "サービス / 用途は？";
+      el.frontAsk.textContent = ask.p2u;
       el.frontMain.textContent = p.port;
       el.frontMain.classList.add("num");
       el.frontSub.textContent = "";
@@ -384,6 +404,7 @@
   if (!state.deck.length && filteredIds().length) {
     startFresh();
   } else {
+    appendNewCards();
     render();
   }
 
